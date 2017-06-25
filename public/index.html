@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>五子棋</title>
+    <link type="text/css" rel="stylesheet" href="./Backgammon.css"/>
+    <script src="./socket.io.js"></script>
+</head>
+<body>
+<div class="title">
+    <p id="please-ie9" style="display:none;"><b>出BUG啦！提示：建议使用chrome浏览器，如果你的浏览器不正常的话</b></p>
+    <div style="border:3px solid #aaa;padding:0 20px;">
+        <div style="border-right:3px solid #aaa;padding-right: 20px;display:inline-block;">
+            <label>用户姓名：<span id="user-name"></span></label>
+            <button id="updateName-btn">换个名字</button>
+        </div>
+        <div style="padding-left: 20px;display:inline-block;">
+            <label>输入房间号：<input type="text" id="room-id"></label>
+            <button id="enter-room">点击进入该房间</button>
+            <button id="create-room">点击创建房间</button>
+            <button id="leave-room">点击离开房间</button>
+        </div>
+    </div>
+</div>
+<div class="main">
+    <div class="tab-btns">
+        <span class="tab-btn btn-blue"><button id="btn-changeToChatRoom">聊天室</button></span><span class="tab-btn"
+                                                                                                  style="display:none"><button
+            id="btn-changeToGameRoom">游戏房间</button></span><span>房间号：<span id="room-info">大厅</span></span>
+    </div>
+    <!--聊天室-->
+    <div id="page-chatroom" style="border:3px solid #aaa;">
+        <ul id="chat-room">
+            <h3>系统信息：</h3>
+            <!--<li>聊天信息</li>-->
+        </ul>
+        <div class="chat-bar">
+            <input type="text" id="words">
+            <button id="words-btn">发言</button>
+        </div>
+    </div>
+    <!--游戏房间-->
+    <div id="page-gameroom" style="display:none;border:3px solid #aaa;">
+        <div>
+            <!--<label>-->
+            <!--棋盘尺寸：<input id="size" type="number" value="19"/> 格-->
+            <!--</label>-->
+            <!--<button style="margin-left:30px;" id="start-btn">【生成棋盘】</button>-->
+            <button style="margin-left:30px;" id="reset-btn">【开始新的一局】</button>
+            <!--<button style="margin-left:30px;" id="backPiece-btn">【悔棋】</button>-->
+            <button style="margin-left:30px;" id="beBlack-btn">【切换为黑方】</button>
+            <button style="margin-left:30px;" id="beWhite-btn">【切换为白方】</button>
+            <button style="margin-left:30px;" id="beWatcher-btn">【切换为观战者】</button>
+        </div>
+        <div id="infos">
+            <div class="info">
+                <span style="font-weight: bold;">游戏状态：</span>
+                <span id="game-status">游戏尚未开始</span>
+            </div>
+            <div class="info" style="display:none;">
+                <span class="infos-tips">当前下棋方：</span>
+                <span id="thisOrder">【无】</span>
+            </div>
+            <div class="info" style="display:none;">
+                <span class="infos-tips">上一次的获胜方：</span>
+                <span id="winner">【无】</span>
+            </div>
+            <div class="info">
+                <span class="infos-tips">黑：</span>
+                <span id="player-black">【无】</span>
+            </div>
+            <div class="info">
+                <span class="infos-tips">白：</span>
+                <span id="player-white">【无】</span>
+            </div>
+            <div class="info">
+                <span class="infos-tips">观战者：</span>
+                <span id="watcher">【无】</span>
+            </div>
+            <div class="info">
+                <span class="infos-tips">房间开启时间：</span>
+                <span id="ctime">无</span>
+            </div>
+            <div class="info">
+                <span class="infos-tips">棋盘大小：</span>
+                <span id="board-size">无</span>
+            </div>
+            <div class="info" style="display:none">
+                <span class="infos-tips">胜利描述：</span>
+                <span id="why-win">【无】</span>
+            </div>
+            <div class="clearFixed"></div>
+        </div>
+        <div id="checkerboard">棋盘：尚未生成</div>
+    </div>
+</div>
+<div id="time">加载游戏大厅状态ing</div>
+<script src="../listenError.js"></script>
+<script src="./Backgammon.js"></script>
+</body>
+</html>
