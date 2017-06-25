@@ -81,6 +81,9 @@ module.exports = {
     },
     //获取user-agent
     getUserAgent(req, key){
+        if (typeof key === 'undefined') {
+            key = "User-Agent";
+        }
         if (Object.prototype.toString.call(req.rawHeaders) === "‌[object Array]") {
             return "";
         }

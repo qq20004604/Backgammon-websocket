@@ -8,14 +8,14 @@ let SETTING = {
 };
 
 //房间信息（从服务器端拉取），包括下棋信息
-let info = {
+let ROOMINFO = {
     black: "",
     white: "",
     watcher: [],
     ctime: "",
     size: 19,
     // 下棋的每一步都存在这里，索引为0的地方，是棋盘(1, 1)的位置；
-    // html标签的索引值let index = info.steps[info.steps.length - 1] + 1;
+    // html标签的索引值let index = ROOMINFO.steps[ROOMINFO.steps.length - 1] + 1;
     steps: [],
     lastWinner: "",
     gameStatus: "",     //游戏状态，original未开局，doing进行中，end已结束
@@ -23,14 +23,13 @@ let info = {
     // toStartGame: true,  //只有在【游戏刚开始】的时候才会存在这个属性，侦测到这个属性后，会去生成棋盘
 }
 
-
 //玩家信息
 let USERINFO = {
     name: "",
 };
 
 //初始化
-init();
+window.onload = init;
 
 function init() {
 
@@ -80,7 +79,6 @@ function selector() {
     }
 }
 
-
 //建立连接后的初始化
 function startEvent(socket) {
     $("#user-name").innerText = "无名氏";
@@ -118,7 +116,7 @@ function listenSocketEvent(socket) {
         $("#room-info").innerText = "断线中";
         $("#time").innerText = "断线中，拉取不到服务器信息";
 
-        resetInfoWhenLeaveRoom();
+        resetRoomInfo();
     })
 
     //监听普通提示（黑字）
@@ -158,7 +156,7 @@ function listenSocketEvent(socket) {
         $("#chat-room").appendChild(li);
         $("#room-info").innerHTML = "大厅";
 
-        resetInfoWhenLeaveRoom();
+        resetRoomInfo();
     })
 
     //聊天信息
@@ -229,33 +227,33 @@ function listenSocketEvent(socket) {
         var index = stepInfo.step;
         var steps = stepInfo.steps;
         //将这一步添加到本地的下棋序列里
-        info.steps.push(index);
+        ROOMINFO.steps.push(index);
 
         //本地验证下棋步骤是否一致
         var isError = false;
         //长度是否一致
-        if (info.steps.length !== stepInfo.steps.length) {
+        if (ROOMINFO.steps.length !== stepInfo.steps.length) {
             isError = true;
-            console.error("本地下棋序列与服务器不符，服务器端该步序列长度为：" + stepInfo.steps.length + "，本地为：" + info.steps.length);
+            console.error("本地下棋序列与服务器不符，服务器端该步序列长度为：" + stepInfo.steps.length + "，本地为：" + ROOMINFO.steps.length);
         } else {
             //遍历每一步是否一致
             steps.map(function (step, i) {
                 //如果服务器返回的当前一步和客户端的不符，则移除客户端的，用服务器端的替代，并标记错误
-                if (step !== info.steps[i]) {
-                    console.error("第" + (i + 1) + "步出错，服务器端该步序列为：" + step + "，本地为：" + info.steps[i]);
+                if (step !== ROOMINFO.steps[i]) {
+                    console.error("第" + (i + 1) + "步出错，服务器端该步序列为：" + step + "，本地为：" + ROOMINFO.steps[i]);
                     isError = true;
                 }
             })
         }
         //如果发现错误，则重新生成棋盘，并按照服务器存储的棋子顺序更新
         if (isError) {
-            info.steps = stepInfo.steps;
+            ROOMINFO.steps = stepInfo.steps;
             $("#checkerboard").innerHTML = '';
-            initBoard(info);
+            initBoard(ROOMINFO);
             //注意，更新完后还是要继续下棋的，参考下面
         } else {
             //如果没错，则在该位置下棋
-            createPiece(index, info.steps.length - 1);
+            createPiece(index, ROOMINFO.steps.length - 1);
         }
         changeColor(steps);
     })
@@ -462,11 +460,11 @@ function initBoard(infoForServer) {
     $("#why-win").parentNode.style.display = "none";
 
     //棋盘的尺寸
-    info = infoForServer;
+    ROOMINFO = infoForServer;
     let size = infoForServer.size;
 
     //设置游戏结束标志为false
-    info.gameover = false;
+    ROOMINFO.gameover = false;
 
     //将棋盘置为空
     $("#checkerboard").innerHTML = "";
@@ -555,8 +553,8 @@ function createPiece(step, index) {
 
 }
 
-//离开房间后，重置棋盘、房间信息等状态
-function resetInfoWhenLeaveRoom() {
+//重置棋盘、房间信息等状态（离开房间后）
+function resetRoomInfo() {
     //隐藏掉【游戏房间】按钮，以及切换到聊天室
     $("#btn-changeToGameRoom").parentNode.style.display = "none";
     if ($("#btn-changeToChatRoom").parentNode.classList.contains("btn-blue")) {
@@ -575,11 +573,10 @@ function resetInfoWhenLeaveRoom() {
     $("#why-win").parentNode.style.display = "none";
 }
 
-
 //下棋的事件代理，避免重复绑定事件
 function checkerboardClick(evt, socket) {
     //只有下棋中的时候点击才有效
-    if (info.gameStatus !== 'doing') {
+    if (ROOMINFO.gameStatus !== 'doing') {
         return;
     }
     let dom = evt.target;
@@ -599,11 +596,12 @@ function checkerboardClick(evt, socket) {
         return;
     }
 }
+
 //判断是否可以下这一步棋
 function checkCanPutPiece(index) {
-    console.log(info.steps, index);
+    // console.log(ROOMINFO.steps, index);
     //如果之前下的其里有这一步，则不允许
-    if (info.steps.indexOf(index) > -1) {
+    if (ROOMINFO.steps.indexOf(index) > -1) {
         return false;
     } else {
         return true;
@@ -621,6 +619,7 @@ function GameOver(roomInfo) {
     $("#winner").parentNode.style.display = "";
     $("#winner").innerText = roomInfo.lastWinner;
 }
+
 //切换颜色
 function changeColor(steps) {
     if ((steps.length + 1) % 2 === 1) {
