@@ -104,6 +104,11 @@ button {
     color: red;
 }
 
+#infos .alert {
+    font-weight: bold;
+    color: red;
+}
+
 #infos .infos-tips {
     font-weight: bold;
 }

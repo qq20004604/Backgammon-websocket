@@ -193,13 +193,21 @@ function listenSocketEvent(socket) {
             $("#player-black").innerHTML = "<span class='myName'>" + roomInfo.black + "</span>";
         } else {
             //黑方
-            $("#player-black").innerText = roomInfo.black ? roomInfo.black : "【无】";
+            if (roomInfo.black) {
+                $("#player-black").innerText = roomInfo.black;
+            } else {
+                $("#player-black").innerHTML = "<span class='alert'>【无】</span>";
+            }
         }
         if (myName === roomInfo.white) {
             $("#player-white").innerHTML = "<span class='myName'>" + roomInfo.white + "</span>";
         } else {
             //白方
-            $("#player-white").innerText = roomInfo.white ? roomInfo.white : "【无】";
+            if (roomInfo.black) {
+                $("#player-white").innerText = roomInfo.white;
+            } else {
+                $("#player-white").innerHTML = "<span class='alert'>【无】</span>";
+            }
         }
         if (roomInfo.watcher.indexOf(myName) !== -1) {
             let newWatcherList = roomInfo.watcher.map(item => {
