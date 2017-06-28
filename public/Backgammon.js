@@ -47,9 +47,6 @@ function init() {
 
     //设置socket相关的点击事件
     listenSocketEvent(socket);
-
-    //初始化
-    startEvent(socket);
 }
 
 //选择器配置
@@ -79,15 +76,11 @@ function selector() {
     }
 }
 
-//建立连接后的初始化
-function startEvent(socket) {
-    $("#user-name").innerText = "无名氏";
-}
-
 //设置socket相关的点击事件
 function listenSocketEvent(socket) {
     //监听登录成功的反馈
     socket.on("connection-success", function (msg) {
+        $("#user-name").innerText = "无名氏";
         if (msg.code === '200') {
             //告诉服务器端有要更新名字了
             let name = getName();
@@ -95,7 +88,7 @@ function listenSocketEvent(socket) {
                 socket.emit('updateName', {
                     name: name
                 });
-            }, 1000);
+            }, 2000);
 
             let li = document.createElement("li");
             li.innerText = "系统消息：" + msg.date + " 你连接到服务器！";
