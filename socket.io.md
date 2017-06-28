@@ -51,19 +51,47 @@ socket.io封装了前端和后端的全部内容，他是一个跨平台的库�
 npm install --save socket.io
 ```
 
-然后通过require引入socket.io的初始化函数，并使用这个函数初始化http服务器实例，如以下代码：
+然后通过require引入socket.io的初始化函数，并使用这个函数初始化http服务器实例。
+
+这里假定你使用express框架（因为这个最简单方便），如以下代码：
 
 ```javascript
-var app = require('http').createServer(handler)
-//在这一步引入并初始化http服务器
-var io = require('socket.io')(app);
-var fs = require('fs');
+// 引入需要的模块：http和express
+var http = require('http');
+var express = require('express');
+var path = require('path');
+var app = express();
+//设置public为静态目录
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('port', '80');
+var server = http.createServer(app);
+//启动服务器
+server.listen(80);
 
-app.listen(80);
-//...以下略
+//以上服务器创建完毕，这个时候可以引入socket.io了
+//创建socket
+var io = require('socket.io')(server);
 ```
 
-初始化之后，会返回一个对象，用这个对象去监听connection事件，然后在回调函数里传的参数，就是每一个用户的websocket实例。可以用这个实例对该用户发送信息，或者监听用户发出的信息等。
+初始化之后，会返回一个对象io，用这个对象去监听connection事件，然后在回调函数里传的参数，就是每一个用户的websocket实例。可以用这个实例对该用户发送信息，或者监听用户发出的信息等。
+
+```
+//添加连接监听
+io.on('connection', function (socket) {
+    console.log("Clent has connectioned");
+    var number = 0;
+    //连接成功则执行下面的监听
+    socket.on('message', function (event) {
+        console.log('Received message from client!', event);
+        number++;
+        socket.emit("receiveMessage", new Date() + "：客户端第" + number + "次发送信息");
+    });
+    //断开连接callback
+    socket.on('disconnect', function () {
+        console.log('Clent has disconnected');
+    });
+});
+```
 
 具体见我的github上的代码[socketIO.js](https://github.com/qq20004604/Backgammon-websocket/blob/master/socket.IO/socketIO.js)
 

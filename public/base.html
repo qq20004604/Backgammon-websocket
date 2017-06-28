@@ -6,12 +6,20 @@
 </head>
 <body>
 <script src="./socket.io.js"></script>
+<button onclick="sendMessage()">点击发送信息</button>
+<ol id="messages"></ol>
 <script>
-    var socket = io('http://localhost');
-    socket.on('news', function (data) {
-        console.log(data);
-        socket.emit('my other event', { my: 'data' });
-    });
+    var socket = window.io.connect(window.location.origin);
+
+    function sendMessage() {
+        socket.emit("message");
+    }
+
+
+    socket.on("receiveMessage", function (msg) {
+        console.log(msg);
+        document.getElementById("messages").innerText = msg;
+    })
 </script>
 </body>
 </html>

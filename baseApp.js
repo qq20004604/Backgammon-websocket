@@ -1,23 +1,30 @@
-// 引入需要的模块：http和socket.io
-var http = require('http'), io = require('socket.io');
-//创建server
-var server = http.createServer(function(req, res){
-    // Send HTML headers and message
-    res.writeHead(200,{ 'Content-Type': 'text/html' });
-    res.end('# Hello Socket Lover!');
-});
-//端口8000
-server.listen(8080);
+// 引入需要的模块：http和express
+var http = require('http');
+var express = require('express');
+var path = require('path');
+var app = express();
+//设置public为静态目录
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('port', '80');
+var server = http.createServer(app);
+//启动服务器
+server.listen(80);
+
 //创建socket
-var socket = io.listen(server);
+var io = require('socket.io')(server);
+
 //添加连接监听
-socket.on('connection', function(client){
+io.on('connection', function (socket) {
+    console.log("Clent has connectioned");
+    var number = 0;
     //连接成功则执行下面的监听
-    client.on('message',function(event){
-        console.log('Received message from client!',event);
+    socket.on('message', function (event) {
+        console.log('Received message from client!', event);
+        number++;
+        socket.emit("receiveMessage", new Date() + "：客户端第" + number + "次发送信息");
     });
     //断开连接callback
-    client.on('disconnect',function(){
-        console.log('Server has disconnected');
+    socket.on('disconnect', function () {
+        console.log('Clent has disconnected');
     });
 });
