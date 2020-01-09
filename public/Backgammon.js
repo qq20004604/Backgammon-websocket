@@ -84,11 +84,9 @@ function listenSocketEvent(socket) {
         if (msg.code === '200') {
             //告诉服务器端有要更新名字了
             let name = getName();
-            setTimeout(function () {
-                socket.emit('updateName', {
-                    name: name
-                });
-            }, 2000);
+            socket.emit('updateName', {
+                name: name
+            });
 
             let li = document.createElement("li");
             li.innerText = "系统消息：" + msg.date + " 你连接到服务器！";
